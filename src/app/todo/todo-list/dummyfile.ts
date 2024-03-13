@@ -11,31 +11,26 @@ export class TodoListComponent {
   constructor(private readonly todoService: TodoService) {}
 
   todos = this.todoService.todos;
+
   filteredTodos: Todo[] = [];
-  showCompleted = false;
 
   async ngOnInit() {
-    await this.loadTodos();
-  }
-
-  async loadTodos() {
-    const todos = await this.todoService.todos;
-    this.filteredTodos = todos.filter(todo => !todo.completed || this.showCompleted);
+    this.filterTodos();
   }
 
   updateTodo(todo: Todo) {
-    this.todoService.updateTodo(todo.id).then(() => {
-      this.loadTodos(); 
-    });
+    this.todoService.updateTodo(todo.id);
+    this.filterTodos()
   }
 
   async newTodo(title: string) {
     await this.todoService.addTodo(title);
-    await this.loadTodos(); 
+    this.todos = this.todoService.todos;
+    this.filterTodos()
   }
 
-  toggleCompleted() {
-    this.showCompleted = !this.showCompleted;
-    this.loadTodos();
+  filterTodos() {
+    this.filteredTodos = this.filteredTodos.filter(todo => !todo.completed);
   }
+  
 }
